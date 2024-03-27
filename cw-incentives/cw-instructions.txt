@@ -1,0 +1,18 @@
+1. Run below query on Mwamba DB - make sure you change the date on both the file and the query to yesterday's date
+COPY (select p.comm_id as phone,iq.amount as Incentive  
+	from incentive_queue iq, participant p 
+	where iq.participant_id=p.id and date(iq.create_date)='2020-10-15' and iq.survey_id in (16971,17129)) 
+	to '/tmp/cw_incentive_queue_15102020.csv' With (FORMAT CSV, HEADER) ;
+
+2. from scheduler server:->  
+scp username@52.89.126.224:/tmp/cw_incentive_queue_11102020.csv /tmp/
+
+3. replace 254 with 0 on a file:->  
+sed -i -e 's/+254/0/g' /tmp/cw_incentive_queue_11102020.csv
+
+4. edit sambaza-1.py and put the correct csv file name
+
+5. Run python sambaza-1.py
+
+6. You can run this command on kannelsaf2 to see the logs and balances:->  
+tail -f /data/toshilogs/nptoshi/event.log | grep "From:Safaricom"
